@@ -1,5 +1,6 @@
 # Use official PHP image with built-in server
 FROM php:8.2-cli
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Install required PHP extensions
 RUN docker-php-ext-install mysqli pdo pdo_mysql
@@ -18,8 +19,8 @@ WORKDIR /app
 COPY composer.json ./
 COPY composer.lock ./
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install PHP dependencies without platform requirement checks
+RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs
 
 # Copy application code
 COPY . .
