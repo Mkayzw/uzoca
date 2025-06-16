@@ -1,43 +1,59 @@
-# HousingQuest Deployment Checklist
+# UZOCA Render Deployment Checklist
 
-## Pre-Deployment Tasks
-- [ ] Backup all current files and database
-- [ ] Test the application locally
-- [ ] Update all dependencies
-- [ ] Remove development-specific files
-- [ ] Update configuration files
+## Pre-Deployment Setup
 
-## Server Requirements
-- [ ] PHP 7.4 or higher
-- [ ] MySQL 5.7 or higher
-- [ ] Apache/Nginx web server
-- [ ] mod_rewrite enabled
-- [ ] SSL certificate
-- [ ] Sufficient disk space
-- [ ] Proper PHP extensions enabled
+### 1. Environment Configuration
+- [x] Updated `config/database.php` to use environment variables
+- [x] Created `render.yaml` for Render deployment configuration
+- [x] Updated `.gitignore` for PHP-specific files
+
+### 2. Render Configuration Required
+
+#### Database Setup (PostgreSQL recommended for Render)
+1. Create a PostgreSQL database in Render dashboard
+2. Note: You'll need to convert MySQL schema to PostgreSQL if using PostgreSQL
+3. Or use PlanetScale/Railway for MySQL hosting
+
+#### Environment Variables to Set in Render:
+- `DB_HOST` - Database host
+- `DB_USER` - Database username  
+- `DB_PASS` - Database password
+- `DB_NAME` - Database name (uzoca)
+- `DB_PORT` - Database port (5432 for PostgreSQL, 3306 for MySQL)
+
+### 3. Deployment Steps
+
+1. **Push to GitHub:**
+   ```bash
+   git add .
+   git commit -m "Add Render deployment configuration"
+   git push origin main
+   ```
+
+2. **Create Render Web Service:**
+   - Connect your GitHub repository
+   - Use the `render.yaml` configuration
+   - Or manually configure:
+     - Build Command: `composer install --no-dev --optimize-autoloader`
+     - Start Command: `php -S 0.0.0.0:$PORT -t .`
+
+3. **Database Migration:**
+   - Import your `database.sql` file into the Render database
+   - Run any additional setup scripts
+
+## Server Requirements (Render Provides)
+- [x] PHP 8.1+ 
+- [x] Web server
+- [x] SSL certificate
+- [x] Sufficient disk space
 
 ## Database Setup
-- [ ] Create new database
-- [ ] Import database structure
-- [ ] Set up database user
-- [ ] Configure database connection
+- [ ] Create Render PostgreSQL database OR external MySQL
+- [ ] Import database structure from `database.sql`
+- [ ] Configure environment variables in Render
 - [ ] Test database connection
 
-## File Upload
-- [ ] Upload all project files
-- [ ] Set correct file permissions
-- [ ] Configure .htaccess
-- [ ] Update environment variables
-- [ ] Test file access
-
-## Security Measures
-- [ ] Enable SSL/HTTPS
-- [ ] Set secure file permissions
-- [ ] Configure error reporting
-- [ ] Set up backup system
-- [ ] Implement rate limiting
-
-## Testing
+## Post-Deployment Testing
 - [ ] Test user registration
 - [ ] Test login system
 - [ ] Test admin functionality

@@ -26,6 +26,12 @@
 .env.test.local
 .env.production.local
 
+# PHP specific
+*.log
+.phpunit.cache/
+vendor/cache/
+.DS_Store
+
 # IDE and Editor files
 .vscode/
 .idea/
