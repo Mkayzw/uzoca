@@ -1,5 +1,5 @@
-# Use official PHP image with Apache
-FROM php:8.2-apache
+# Use official PHP image with built-in server
+FROM php:8.2-cli
 
 # Install required PHP extensions
 RUN docker-php-ext-install mysqli pdo pdo_mysql
@@ -12,10 +12,11 @@ RUN apt-get update && apt-get install -y libpq-dev \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /app
 
-# Copy composer files
-COPY composer.json composer.lock ./
+# Copy composer files first
+COPY composer.json ./
+COPY composer.lock ./
 
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -23,15 +24,12 @@ RUN composer install --no-dev --optimize-autoloader
 # Copy application code
 COPY . .
 
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html
-RUN chmod -R 755 /var/www/html
+# Create a startup script
+RUN echo '#!/bin/bash\nphp -S 0.0.0.0:$PORT -t .' > /app/start.sh \
+    && chmod +x /app/start.sh
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Expose port
+EXPOSE $PORT
 
-# Expose port 80
-EXPOSE 80
-
-# Start Apache
-CMD ["apache2-foreground"]
+# Start PHP built-in server
+CMD ["/app/start.sh"]
