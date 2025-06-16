@@ -1,0 +1,62 @@
+# HTID:19894376: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
+php_value display_errors 1
+# DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES ABOVE HTID:19894376:
+
+Options +FollowSymLinks
+Options -Indexes
+
+# PHP Handler Configuration
+AddType application/x-httpd-php .php
+AddHandler application/x-httpd-php .php
+
+RewriteEngine On
+RewriteBase /uzoca/
+
+# Allow direct access to login-related and test files
+RewriteCond %{REQUEST_URI} !^/uzoca/(login|register|test_login|test|test_admin_login)\.php$ [NC]
+RewriteCond %{REQUEST_URI} !^/uzoca/(css|js|images|assets)/ [NC]
+RewriteCond %{REQUEST_URI} !^/uzoca/includes/ [NC]
+RewriteCond %{REQUEST_URI} !^/uzoca/vendor/ [NC]
+RewriteCond %{REQUEST_URI} !^/uzoca/app/ [NC]
+RewriteCond %{REQUEST_URI} !^/uzoca/lib/ [NC]
+RewriteCond %{REQUEST_URI} !^/uzoca/admin/ [NC]
+
+# Handle direct access to PHP files
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# Handle front controller
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_URI} !\.php$ [NC]
+RewriteRule ^(.+)$ $1.php [L,QSA]
+
+# Handle 404 errors
+ErrorDocument 404 /uzoca/404.php
+
+# Handle 403 errors
+ErrorDocument 403 /uzoca/403.php
+
+# Allow access to specific files
+<FilesMatch "^(login|register|test_login|test|test_admin_login|index)\.php$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Set default character set
+AddDefaultCharset UTF-8
+
+# Enable error display for debugging
+php_flag display_errors on
+php_value error_reporting E_ALL
+
+# Allow PHP to handle sessions
+php_flag session.auto_start off
+php_value session.gc_maxlifetime 86400
+php_value session.cookie_lifetime 86400
+
+# Ensure PHP files are executed
+<Files *.php>
+    SetHandler application/x-httpd-php
+</Files>
