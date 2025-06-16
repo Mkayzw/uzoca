@@ -5,7 +5,7 @@ FROM php:8.2-cli
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Install PostgreSQL extension (in case you want to use PostgreSQL)
-RUN apt-get update && apt-get install -y libpq-dev git zip unzip \
+RUN apt-get update && apt-get install -y libpq-dev git zip unzip pkg-config libzip-dev \
     && docker-php-ext-install pdo_pgsql zip
 
 # Install Composer
